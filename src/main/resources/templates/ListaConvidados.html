@@ -1,13 +1,79 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"/> <meta name="viewport" content="width=device-width" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width"/>
     <title>Lista de Convidados</title>
     <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
     <link th:href="@{/webjars/bootstrap/css/bootstrap-theme.min.css}" rel="stylesheet"/>
 </head>
 <body>
-<h1>akakas</h1>
+
+<div class="panel panel-default" style="margin: 10px">
+    <div class="panel-heading">
+        <h1 class="panel-title">Lista de convidados</h1>
+    </div>
+
+    <div class="panel-body">
+        <form class="form-inline" method="POST" th:action="@{/convidados}"
+              th:object="${convidado}" style="margin: 20px 0">
+            <div class="form-group">
+                <input type="text" class="form-control" id="nome"
+                       th:field="*{nome}" placeholder="Nome"/>
+                <input type="text" class="form-control" id="acompanhantes"
+                       th:field="*{acompanhantes}" placeholder="Acompanhantes"/>
+
+                <button type="submit" class="btn btn-primary">Adicionar</button>
+            </div>
+        </form>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Acompanhantes</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="convidado : ${convidados}">
+                <td th:text="${convidado.nome}"></td>
+                <td th:text="${convidado.acompanhantes}"></td>
+                <td>
+                    <button class="btn btn-danger" th:onclick="'deleteGuest(\'' + ${convidado.id} + '\')'">Excluir</button>
+
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+<script type="text/javascript">
+    function deleteGuest(convidadoId) {
+        if (confirm('Você tem certeza que deseja excluir este convidado?')) {
+            fetch(`/convidados/${convidadoId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Erro ao excluir convidado');
+                }
+            }).catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao excluir convidado');
+            });
+        }
+    }
+</script>
+
 </body>
 </html>
-
